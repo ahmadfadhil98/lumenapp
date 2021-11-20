@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use stdClass;
 
 class AuthController extends Controller
 {
@@ -33,11 +35,14 @@ class AuthController extends Controller
         $user->update([
             'token' => $generateToken
         ]);
-        return response()->json($user);
+
+        $api = new \stdClass();
+        $api->data = $user;
+        return response()->json($api);
     }
 
     public function logout(Request $request){
-        $user = \Auth::user();
+        $user = Auth::user();
         $user->token = null;
         $user->save();
 

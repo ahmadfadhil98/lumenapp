@@ -35,7 +35,13 @@ $router->get('/detailfasilitas', function () use ($router) {
 $router->post('/register', 'UserController@register');
 $router->post('/login','AuthController@login');
 
+// $router->get('api/homestay', "HomestayController@listHomestay");
 
 $router->group(['middleware' => 'auth'], function() use ($router){
+
+    $router->post('/api/homestay/store', "HomestayController@store");
+    $router->get('/api/homestay', "HomestayController@index");
+
+    $router->post('/api/jenis/store', "JenisController@store");
     $router->post('/logout', 'AuthController@logout');
 });
