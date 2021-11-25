@@ -40,8 +40,15 @@ $router->post('/login','AuthController@login');
 $router->group(['middleware' => 'auth'], function() use ($router){
 
     $router->post('/api/homestay/store', "HomestayController@store");
-    $router->get('/api/homestay', "HomestayController@index");
+
+    $router->get('api/homestay', "HomestayController@index");
+    $router->get('api/homestay/{id}','HomestayController@show');
+    // $router->get('/api/homestay', function () use ($router) {
+    //     $results = app('db')->select("SELECT * FROM homestays join jenis on jenis.id = homestays.jenis_id");
+    //     return response()->json($results);
+    // });
 
     $router->post('/api/jenis/store', "JenisController@store");
+    $router->get('/api/user/{id}','UserController@show');
     $router->post('/logout', 'AuthController@logout');
 });

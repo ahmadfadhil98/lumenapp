@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Homestay;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use stdClass;
 
 class HomestayController extends Controller
@@ -19,8 +20,9 @@ class HomestayController extends Controller
     {
         $listHomestay = new stdClass();
         $homestay = Homestay::join('jenis','jenis.id','=','homestays.jenis_id')
+        ->select('homestays.id','nama','jenis','foto')
         ->get();
-
+        // $homestay = DB::select('select * from homestays join jenis on jenis.id=homestays.jenis_id');
         $listHomestay->homestay = $homestay;
         return response()->json($listHomestay);
     }
@@ -76,9 +78,15 @@ class HomestayController extends Controller
      * @param  \App\Models\Homestay  $homestay
      * @return \Illuminate\Http\Response
      */
-    public function show(Homestay $homestay)
+    public function show($id)
     {
-        //
+        $home = new stdClass();
+        $homeItem = Homestay::join('jenis','jenis.id','=','homestays.jenis_id')
+        ->where('homestays.id',$id)
+        ->select('homestays.id','nama','jenis','alamat','website','no_hp',)
+        ->get();
+        $home->home = $homeItem;
+        return response()->json($home);
     }
 
     /**

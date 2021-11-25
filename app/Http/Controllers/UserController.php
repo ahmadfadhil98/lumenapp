@@ -26,4 +26,8 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Pendaftaran pengguna berhasil dilaksanakan']);
     }
+
+    public function show(Request $request){
+
+    }
 }
