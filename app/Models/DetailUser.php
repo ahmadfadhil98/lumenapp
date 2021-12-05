@@ -10,6 +10,7 @@ class DetailUser extends Model
     use HasFactory;
     protected $table = "detail_users";
     protected $fillable = [
+        'id',
         'nama',
         'jk',
         'no_hp',

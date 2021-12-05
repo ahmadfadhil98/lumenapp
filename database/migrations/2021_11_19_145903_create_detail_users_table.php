@@ -16,11 +16,11 @@ class CreateDetailUsersTable extends Migration
         Schema::create('detail_users', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->primary();
             $table->string('nama');
-            $table->integer('jk');
-            $table->string('no_hp');
-            $table->string('tempat_lahir');
-            $table->date('tgl_lahir');
-            $table->string('foto');
+            $table->integer('jk')->nullable();
+            $table->string('no_hp')->nullable();
+            $table->string('tempat_lahir')->nullable();
+            $table->date('tgl_lahir')->nullable();
+            $table->string('foto')->nullable();
             $table->timestamps();
 
             $table->foreignId('id')->references('id')->on('users');

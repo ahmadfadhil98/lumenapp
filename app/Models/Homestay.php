@@ -16,7 +16,8 @@ class Homestay extends Model
         'foto',
         'no_hp',
         'website',
-        'point',
+        'latitude',
+        'longitude',
         'keterangan'
     ];
 

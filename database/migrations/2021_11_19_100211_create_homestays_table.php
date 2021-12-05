@@ -18,9 +18,9 @@ class CreateHomestaysTable extends Migration
             $table->foreignId('jenis_id')->references('id')->on('jenis');
             $table->string('nama');
             $table->string('alamat');
-            $table->string('foto');
+            $table->string('foto')->nullable();
             $table->string('no_hp')->unique();
-            $table->string('website');
+            $table->string('website')->nullable();
             $table->geometry('point');
             $table->text('keterangan');
             $table->timestamps();

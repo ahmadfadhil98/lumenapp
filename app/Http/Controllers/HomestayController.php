@@ -20,7 +20,8 @@ class HomestayController extends Controller
     {
         $listHomestay = new stdClass();
         $homestay = Homestay::join('jenis','jenis.id','=','homestays.jenis_id')
-        ->select('homestays.id','nama','jenis','foto')
+        ->select('homestays.id','nama','jenis','foto','latitude','longitude',
+        DB::raw('(SELECT AVG(rating) from reviews where reviews.homestay_id = homestays.id) as rating'))
         ->get();
         // $homestay = DB::select('select * from homestays join jenis on jenis.id=homestays.jenis_id');
         $listHomestay->homestay = $homestay;
@@ -57,7 +58,9 @@ class HomestayController extends Controller
         $foto = $request->input('foto');
         $no_hp = $request->input('no_hp');
         $website = $request->input('website');
-        $point = $request->input('point');
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
+        $keterangan = $request->input('keterangan');
 
         $homestay = Homestay::create([
             'jenis_id' => $jenis_id,
@@ -66,7 +69,9 @@ class HomestayController extends Controller
             'foto' => $foto,
             'no_hp' => $no_hp,
             'website' => $website,
-            'point' => $point
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'keterangan' => $keterangan
         ]);
 
         return response()->json(['message' => 'Data Berhasil Masuk ke Tabel Homestay']);
@@ -83,7 +88,8 @@ class HomestayController extends Controller
         $home = new stdClass();
         $homeItem = Homestay::join('jenis','jenis.id','=','homestays.jenis_id')
         ->where('homestays.id',$id)
-        ->select('homestays.id','nama','jenis','alamat','website','no_hp',)
+        ->select('homestays.id','nama','jenis','alamat','website','no_hp','foto',
+        DB::raw('(SELECT AVG(rating) from reviews where reviews.homestay_id = homestays.id) as rating'))
         ->get();
         $home->home = $homeItem;
         return response()->json($home);
