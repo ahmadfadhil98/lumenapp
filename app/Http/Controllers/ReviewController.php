@@ -41,8 +41,7 @@ class ReviewController extends Controller
     {
         $this->validate($request, [
             'user_id' =>'required',
-            'homestay_id' => 'required',
-            'rating' => 'required'
+            'homestay_id' => 'required'
         ]);
 
         $user_id = $request->input('user_id');
