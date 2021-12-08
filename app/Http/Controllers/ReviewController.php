@@ -52,6 +52,9 @@ class ReviewController extends Controller
         $review = Review::create([
             'user_id' => $user_id,
             'homestay_id' => $homestay_id,
+            'rating' => $rating,
+            'komentar' => $komentar,
+            
         ]);
 
         return response()->json(['message' => 'Data Berhasil Masuk ke Tabel Review']);
