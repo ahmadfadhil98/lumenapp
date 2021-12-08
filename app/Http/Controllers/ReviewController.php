@@ -43,12 +43,12 @@ class ReviewController extends Controller
             'user_id' =>'required',
             'homestay_id' => 'required'
         ]);
-        return response()->json(['message' => 'Sini aman']);
+        
         $user_id = $request->input('user_id');
         $homestay_id = $request->input('homestay_id');
         $rating = $request->input('rating');
         $komentar = $request->input('komentar');
-
+        return response()->json(['message' => 'Sini aman']);
         $review = Review::create([
             'user_id' => $user_id,
             'homestay_id' => $homestay_id,
