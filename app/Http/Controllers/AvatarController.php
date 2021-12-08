@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unit;
+use App\Models\Avatar;
 use Illuminate\Http\Request;
 use stdClass;
 
-class UnitController extends Controller
+class AvatarController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,10 +15,10 @@ class UnitController extends Controller
      */
     public function index()
     {
-        $listUnit = new stdClass();
-        $itemUnit = Unit::get();
-        $listUnit->detail_user = $itemUnit;
-        return response()->json($listUnit);
+        $listAvatar = new stdClass();
+        $itemAvatar = Avatar::select('path')->get();
+        $listAvatar->avatar = $itemAvatar;
+        return response()->json($listAvatar);
     }
 
     /**
@@ -39,44 +39,27 @@ class UnitController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'nama' =>'required',
-            'homestay_id' => 'required',
-        ]);
-
-        $nama = $request->input('nama');
-        $homestay_id = $request->input('homestay_id');
-
-        $units = Unit::create([
-            'nama' => $nama,
-            'homestay_id' => $homestay_id,
-        ]);
-
-        return response()->json(['message' => 'Data Berhasil Masuk ke Tabel Unit Homestay']);
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Unit  $unit
+     * @param  \App\Models\Avatar  $avatar
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Avatar $avatar)
     {
-        $unitList = new stdClass();
-        $units = Unit::where('homestay_id',$id)->select('nama','harga')->get();
-        $unitList->unit = $units;
-        return response()->json($unitList);
-
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Unit  $unit
+     * @param  \App\Models\Avatar  $avatar
      * @return \Illuminate\Http\Response
      */
-    public function edit(Unit $unit)
+    public function edit(Avatar $avatar)
     {
         //
     }
@@ -85,10 +68,10 @@ class UnitController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Unit  $unit
+     * @param  \App\Models\Avatar  $avatar
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Unit $unit)
+    public function update(Request $request, Avatar $avatar)
     {
         //
     }
@@ -96,10 +79,10 @@ class UnitController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Unit  $unit
+     * @param  \App\Models\Avatar  $avatar
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Unit $unit)
+    public function destroy(Avatar $avatar)
     {
         //
     }

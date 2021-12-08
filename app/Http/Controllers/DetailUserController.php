@@ -57,8 +57,11 @@ class DetailUserController extends Controller
         $tgl_lahir = $request->input('tgl_lahir');
         $foto = $request->input('foto');
 
-        $myDate = '12/08/2020';
-        $date = Carbon::createFromFormat('d/m/Y', $tgl_lahir)->format('Y-m-d');
+        if($tgl_lahir!=null){
+            $date = Carbon::createFromFormat('d/m/Y', $tgl_lahir)->format('Y-m-d');
+        }else{
+            $date = null;
+        }
 
         $detailUser = DetailUser::create([
             'id' => $id,

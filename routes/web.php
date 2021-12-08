@@ -24,16 +24,6 @@ $router->get('data', function () use ($router) {
 
 
 
-$router->get('/fasilitas', function () use ($router) {
-    $results = app('db')->select("SELECT * FROM fasilitas");
-    return response()->json($results);
-});
-
-$router->get('/detailfasilitas', function () use ($router) {
-    $results = app('db')->select("SELECT * FROM detail_fasilitas");
-    return response()->json($results);
-});
-
 $router->post('register', 'UserController@register');
 $router->post('login','AuthController@login');
 
@@ -63,10 +53,18 @@ $router->group(['middleware' => 'auth'], function() use ($router){
     $router->post('api/dfasilitas/store', "DetailFasilitasController@store");
     $router->get('api/dfasilitas/{id}','DetailFasilitasController@show');
 
+    $router->get('api/unit','UnitController@index');
+    $router->post('api/unit/store','UnitController@store');
+    $router->get('api/unit/{id}','UnitController@show');
+
     $router->get('api/duser', "DetailUserController@index");
     $router->post('api/duser/store', "DetailUserController@store");
     $router->get('api/duser/{id}','DetailUserController@show');
 
     $router->get('api/user/{id}','UserController@show');
+    $router->post('api/user/update/{id}', "UserController@update");
+
+    $router->get('api/avatar','AvatarController@index');
+
     $router->post('logout', 'AuthController@logout');
 });
