@@ -49,6 +49,7 @@ class ReviewController extends Controller
         $rating = $request->input('rating');
         $komentar = $request->input('komentar');
         
+        return response()->json(['message' => $user_id+$homestay_id]);
         $review = Review::create([
             'user_id' => $user_id,
             'homestay_id' => $homestay_id,
