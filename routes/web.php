@@ -38,6 +38,7 @@ $router->group(['middleware' => 'auth'], function() use ($router){
     $router->get('api/review', "ReviewController@index");
     $router->post('api/review/store', "ReviewController@store");
     $router->get('api/review/{id}','ReviewController@show');
+    $router->get('api/review/{id_user}/{id_homestay}','ReviewController@look');
 
     // $router->get('/api/homestay', function () use ($router) {
     //     $results = app('db')->select("SELECT * FROM homestays join jenis on jenis.id = homestays.jenis_id");

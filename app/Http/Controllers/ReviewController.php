@@ -43,18 +43,18 @@ class ReviewController extends Controller
             'user_id' =>'required',
             'homestay_id' => 'required'
         ]);
-        
+
         $user_id = $request->input('user_id');
         $homestay_id = $request->input('homestay_id');
         $rating = $request->input('rating');
         $komentar = $request->input('komentar');
-        
+
         $review = Review::create([
             'user_id' => $user_id,
             'homestay_id' => $homestay_id,
             'rating' => $rating,
             'komentar' => $komentar,
-            
+
         ]);
 
         return response()->json(['message' => 'Data Berhasil Masuk ke Tabel Review']);
@@ -76,6 +76,14 @@ class ReviewController extends Controller
         ->get();
         $listReview->review = $review;
         return response()->json($listReview);
+    }
+
+    public function look($id_user,$id_homestay)
+    {
+        $review = Review::where('homestay_id','=',$id_homestay)
+        ->where('user_id','=',$id_user)
+        ->select('rating','komentar')->first();
+        return response()->json($review);
     }
 
     /**
