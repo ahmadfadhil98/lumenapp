@@ -12,19 +12,20 @@ use stdClass;
 
 class UserController extends Controller
 {
-    public function register(Request $request){
+    public function register(Request $request)
+    {
         // $validator = $this->validate($request, [
         //     'username' =>'required|unique:users,username',
         //     'email' => 'required|unique:users|email',
         //     'password' => 'required|min:6'
         // ]);
         $validator = Validator::make($request->all(), [
-            'username' =>'required|unique:users,username',
+            'username' => 'required|unique:users,username',
             'email' => 'required|unique:users|email',
             'password' => 'required|min:6'
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors() , 200);
+            return response()->json($validator->errors(), 200);
         }
 
         $username = $request->input('username');
@@ -40,78 +41,106 @@ class UserController extends Controller
             'token' => $generateToken
         ]);
 
+        // $duser = DetailUser::create([
+        //     'id' => $user->id
+        // ]);
+
         return response()->json([
-            'message' => 'Pendaftaran pengguna berhasil dilaksanakan' ,
+            'message' => 'Pendaftaran pengguna berhasil dilaksanakan',
             'id' => $user->id,
             'token' => $user->token
         ]);
     }
 
-    public function show($id){
-
+    public function show($id)
+    {
     }
 
     public function update(Request $request, $id)
     {
-        $user = User::where('id',$id)->first();
-        $duser = DetailUser::where('id',$id)->first();
+        $user = User::where('id', $id)->first();
+        $duser = DetailUser::where('id', $id)->first();
 
         $email = $request->input('email');
-        if($request->input('password')!=null){
+        $username = $request->input('username');
+
+        if ($request->input('password') != null) {
             $password = Hash::make($request->input('password'));
-        }else{
-            $password = $user->password;
-        }
 
-        $nama = $request->input('nama');
-        $jk = $request->input('jk');
-        $no_hp = $request->input('no_hp');
-        $tempat_lahir = $request->input('tempat_lahir');
-        $tgl_lahir = $request->input('tgl_lahir');
-
-        if($request->input('foto')!=null){
-            $foto = $request->input('foto');
-        }else{
-            $foto = $duser->foto;
-        }
-
-
-
-        if($tgl_lahir!=null){
-            $date = Carbon::createFromFormat('d/m/Y', $tgl_lahir)->format('Y-m-d');
-        }else{
-            $date = null;
-        }
-
-        if ($email!=null){
             $user->update([
-                'email' => 'user@mail.com'
+                'password' => $password
             ]);
+        } else {
 
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|unique:users|email',
-            ]);
-            if ($validator->fails()) {
-                return response()->json($validator->errors() , 200);
+            if ($request->input('foto') != null) {
+                $foto = $request->input('foto');
+                $nama = $duser->nama;
+                $jk = $duser->jk;
+                $no_hp = $duser->no_hp;
+                $tempat_lahir = $duser->tempat_lahir;
+                $tgl_lahir = $duser->tgl_lahir;
+                $date = $tgl_lahir;
+            } else {
+                $foto = $duser->foto;
+                $nama = $request->input('nama');
+                $jk = $request->input('jk');
+                $no_hp = $request->input('no_hp');
+                $tempat_lahir = $request->input('tempat_lahir');
+                $tgl_lahir = $request->input('tgl_lahir');
+
+                if ($tgl_lahir != null) {
+                    $date = Carbon::createFromFormat('d/m/Y', $tgl_lahir)->format('Y-m-d');
+                } else {
+                    $date = null;
+                }
             }
 
-            $user->update([
-                'email' => $email
+            if ($email != null) {
+
+                $user->update([
+                    'email' => 'user@mailis.com'
+                ]);
+
+                $validator = Validator::make($request->all(), [
+                    'email' => 'required|unique:users|email',
+                ]);
+                if ($validator->fails()) {
+                    return response()->json($validator->errors(), 200);
+                }
+
+                $user->update([
+                    'email' => $email
+                ]);
+            }
+
+            if ($username != null) {
+
+                $user->update([
+                    'username' => 'usernamedummy'
+                ]);
+
+                $validator = Validator::make($request->all(), [
+                    'username' => 'required|unique:users,username',
+                ]);
+                if ($validator->fails()) {
+                    return response()->json($validator->errors(), 200);
+                }
+
+                $user->update([
+                    'username' => $username
+                ]);
+            }
+
+
+            $duser->update([
+                'nama' => $nama,
+                'jk' => $jk,
+                'no_hp' => $no_hp,
+                'tempat_lahir' => $tempat_lahir,
+                'tgl_lahir' => $date,
+                'foto' => $foto,
             ]);
         }
-
-        $user->update([
-            'password' => $password
-        ]);
-
-        $duser->update([
-            'nama' => $nama,
-            'jk' => $jk,
-            'no_hp' => $no_hp,
-            'tempat_lahir' => $tempat_lahir,
-            'tgl_lahir' => $date,
-            'foto' => $foto,
-        ]);
 
         return response()->json([
             'message' => 'Update pengguna berhasil dilaksanakan'

@@ -25,20 +25,20 @@ $router->get('data', function () use ($router) {
 
 
 $router->post('register', 'UserController@register');
-$router->post('login','AuthController@login');
+$router->post('login', 'AuthController@login');
 
 // $router->get('api/homestay', "HomestayController@listHomestay");
 
-$router->group(['middleware' => 'auth'], function() use ($router){
+$router->group(['middleware' => 'auth'], function () use ($router) {
 
     $router->get('api/homestay', "HomestayController@index");
     $router->post('api/homestay/store', "HomestayController@store");
-    $router->get('api/homestay/{id}','HomestayController@show');
+    $router->get('api/homestay/{id}', 'HomestayController@show');
 
     $router->get('api/review', "ReviewController@index");
     $router->post('api/review/store', "ReviewController@store");
-    $router->get('api/review/{id}','ReviewController@show');
-    $router->get('api/review/{id_user}/{id_homestay}','ReviewController@look');
+    $router->get('api/review/{id}', 'ReviewController@show');
+    $router->get('api/review/{id_user}/{id_homestay}', 'ReviewController@look');
 
     // $router->get('/api/homestay', function () use ($router) {
     //     $results = app('db')->select("SELECT * FROM homestays join jenis on jenis.id = homestays.jenis_id");
@@ -52,20 +52,24 @@ $router->group(['middleware' => 'auth'], function() use ($router){
 
     $router->get('api/dfasilitas', "DetailFasilitasController@index");
     $router->post('api/dfasilitas/store', "DetailFasilitasController@store");
-    $router->get('api/dfasilitas/{id}','DetailFasilitasController@show');
+    $router->get('api/dfasilitas/{id}', 'DetailFasilitasController@show');
 
-    $router->get('api/unit','UnitController@index');
-    $router->post('api/unit/store','UnitController@store');
-    $router->get('api/unit/{id}','UnitController@show');
+    $router->get('api/unit', 'UnitController@index');
+    $router->post('api/unit/store', 'UnitController@store');
+    $router->get('api/unit/{id}', 'UnitController@show');
+
+    $router->get('api/pembayaran', 'PembayaranController@index');
+    $router->post('api/pembayaran/store', 'PembayaranController@store');
+    $router->get('api/pembayaran/{id}', 'PembayaranController@show');
 
     $router->get('api/duser', "DetailUserController@index");
     $router->post('api/duser/store', "DetailUserController@store");
-    $router->get('api/duser/{id}','DetailUserController@show');
+    $router->get('api/duser/{id}', 'DetailUserController@show');
 
-    $router->get('api/user/{id}','UserController@show');
+    $router->get('api/user/{id}', 'UserController@show');
     $router->post('api/user/update/{id}', "UserController@update");
 
-    $router->get('api/avatar','AvatarController@index');
+    $router->get('api/avatar', 'AvatarController@index');
 
     $router->post('logout', 'AuthController@logout');
 });

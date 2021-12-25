@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unit;
+use App\Models\Pembayaran;
 use Illuminate\Http\Request;
 use stdClass;
 
-class UnitController extends Controller
+class PembayaranController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,8 +16,8 @@ class UnitController extends Controller
     public function index()
     {
         $listUnit = new stdClass();
-        $itemUnit = Unit::get();
-        $listUnit->detail_user = $itemUnit;
+        $itemUnit = Pembayaran::get();
+        $listUnit->pembayaran = $itemUnit;
         return response()->json($listUnit);
     }
 
@@ -40,46 +40,46 @@ class UnitController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'nama' => 'required',
+            'nama_bank' => 'required',
+            'no_rekening' => 'required',
             'homestay_id' => 'required',
-            'harga' => 'required'
         ]);
 
-        $nama = $request->input('nama');
+        $nama_bank = $request->input('nama_bank');
+        $no_rekening = $request->input('no_rekening');
         $homestay_id = $request->input('homestay_id');
-        $harga = $request->input('harga');
 
-        $units = Unit::create([
-            'nama' => $nama,
+        $pembayarans = Pembayaran::create([
+            'nama_bank' => $nama_bank,
+            'no_rekening' => $no_rekening,
             'homestay_id' => $homestay_id,
-            'harga' => $harga
         ]);
 
-        return response()->json(['message' => 'Data Berhasil Masuk ke Tabel Unit Homestay']);
+        return response()->json(['message' => 'Data Berhasil Masuk ke Tabel Pembayaran Homestay']);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Unit  $unit
+     * @param  \App\Models\Pembayaran  $pembayaran
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $unitList = new stdClass();
-        $units = Unit::where('homestay_id', $id)->select('id', 'nama', 'harga')->get();
-        $unitList->jumlah = $units->count();
-        $unitList->unit = $units;
-        return response()->json($unitList);
+        $pembayaranList = new stdClass();
+        $pembayarans = Pembayaran::where('homestay_id', $id)->select('id', 'nama_bank', 'no_rekening')->get();
+        $pembayaranList->jumlah = $pembayarans->count();
+        $pembayaranList->pembayaran = $pembayarans;
+        return response()->json($pembayaranList);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Unit  $unit
+     * @param  \App\Models\Pembayaran  $pembayaran
      * @return \Illuminate\Http\Response
      */
-    public function edit(Unit $unit)
+    public function edit(Pembayaran $pembayaran)
     {
         //
     }
@@ -88,10 +88,10 @@ class UnitController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Unit  $unit
+     * @param  \App\Models\Pembayaran  $pembayaran
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Unit $unit)
+    public function update(Request $request, Pembayaran $pembayaran)
     {
         //
     }
@@ -99,10 +99,10 @@ class UnitController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Unit  $unit
+     * @param  \App\Models\Pembayaran  $pembayaran
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Unit $unit)
+    public function destroy(Pembayaran $pembayaran)
     {
         //
     }

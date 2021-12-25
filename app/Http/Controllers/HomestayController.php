@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailFasilitas;
 use App\Models\Homestay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,10 +20,17 @@ class HomestayController extends Controller
     public function index()
     {
         $listHomestay = new stdClass();
-        $homestay = Homestay::join('jenis','jenis.id','=','homestays.jenis_id')
-        ->select('homestays.id','nama','jenis','foto','latitude','longitude',
-        DB::raw('(SELECT AVG(rating) from reviews where reviews.homestay_id = homestays.id) as rating'))
-        ->get();
+        $homestay = Homestay::join('jenis', 'jenis.id', '=', 'homestays.jenis_id')
+            ->select(
+                'homestays.id',
+                'nama',
+                'jenis',
+                'foto',
+                'latitude',
+                'longitude',
+                DB::raw('(SELECT AVG(rating) from reviews where reviews.homestay_id = homestays.id) as rating')
+            )
+            ->get();
         // $homestay = DB::select('select * from homestays join jenis on jenis.id=homestays.jenis_id');
         $listHomestay->homestay = $homestay;
         return response()->json($listHomestay);
@@ -47,7 +55,7 @@ class HomestayController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'jenis_id' =>'required',
+            'jenis_id' => 'required',
             'nama' => 'required',
             'no_hp' => 'required'
         ]);
@@ -86,12 +94,26 @@ class HomestayController extends Controller
     public function show($id)
     {
         $home = new stdClass();
-        $homeItem = Homestay::join('jenis','jenis.id','=','homestays.jenis_id')
-        ->where('homestays.id',$id)
-        ->select('homestays.id','nama','jenis','alamat','website','no_hp','foto',
-        DB::raw('(SELECT AVG(rating) from reviews where reviews.homestay_id = homestays.id) as rating'))
-        ->get();
+        $homeItem = Homestay::join('jenis', 'jenis.id', '=', 'homestays.jenis_id')
+            ->where('homestays.id', $id)
+            ->select(
+                'homestays.id',
+                'nama',
+                'jenis',
+                'alamat',
+                'website',
+                'no_hp',
+                'foto',
+                'latitude',
+                'longitude',
+                DB::raw('(SELECT AVG(rating) from reviews where reviews.homestay_id = homestays.id) as rating')
+            )
+            ->get();
+        // $fasilitasItem = DetailFasilitas::join('fasilitas', 'fasilitas.id', '=', 'detail_fasilitas.fasilitas_id')
+        //     ->where('homestay_id', $id)
+        //     ->select('fasilitas.nama', 'jumlah')->get();
         $home->home = $homeItem;
+        // $home->fasilitas = $fasilitasItem;
         return response()->json($home);
     }
 
