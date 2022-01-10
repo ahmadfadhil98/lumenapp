@@ -15,7 +15,10 @@ class DetailFasilitasController extends Controller
      */
     public function index()
     {
-        //
+        $listUser = new stdClass();
+        $itemUser = DetailFasilitas::get();
+        $listUser->detail_fasilitas = $itemUser;
+        return response()->json($listUser);
     }
 
     /**
@@ -37,7 +40,7 @@ class DetailFasilitasController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'fasilitas_id' =>'required',
+            'fasilitas_id' => 'required',
             'homestay_id' => 'required',
             'jumlah' => 'required'
         ]);
@@ -64,11 +67,11 @@ class DetailFasilitasController extends Controller
     public function show($id)
     {
         $dFasilitas = new stdClass();
-        $detailFasilitas = DetailFasilitas::join('fasilitas','fasilitas.id','=','detail_fasilitas.fasilitas_id')
-        ->join('homestays','homestays.id','=','detail_fasilitas.homestay_id')
-        ->where('detail_fasilitas.homestay_id',$id)
-        ->select('fasilitas.nama','detail_fasilitas.fasilitas_id','detail_fasilitas.homestay_id','detail_fasilitas.jumlah')
-        ->get();
+        $detailFasilitas = DetailFasilitas::join('fasilitas', 'fasilitas.id', '=', 'detail_fasilitas.fasilitas_id')
+            ->join('homestays', 'homestays.id', '=', 'detail_fasilitas.homestay_id')
+            ->where('detail_fasilitas.homestay_id', $id)
+            ->select('fasilitas.nama', 'detail_fasilitas.fasilitas_id', 'detail_fasilitas.homestay_id', 'detail_fasilitas.jumlah')
+            ->get();
         $dFasilitas->fasilitas_homestay = $detailFasilitas;
         return response()->json($dFasilitas);
     }

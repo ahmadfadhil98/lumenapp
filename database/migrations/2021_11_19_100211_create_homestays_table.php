@@ -17,12 +17,13 @@ class CreateHomestaysTable extends Migration
             $table->id();
             $table->foreignId('jenis_id')->references('id')->on('jenis');
             $table->string('nama');
-            $table->string('alamat');
+            $table->string('alamat')->nullable();
             $table->string('foto')->nullable();
             $table->string('no_hp')->unique();
             $table->string('website')->nullable();
-            $table->geometry('point');
-            $table->text('keterangan');
+            $table->double('latitude');
+            $table->double('longitude');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

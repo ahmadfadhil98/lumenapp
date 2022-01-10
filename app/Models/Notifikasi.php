@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Unit extends Model
+class Notifikasi extends Model
 {
     use HasFactory;
-    protected $table = "units";
+    protected $table = "notifikasis";
     protected $fillable = [
-        'nama',
-        'homestay_id',
-        'harga',
+        'user_id',
+        'title',
+        'message',
         'status'
     ];
 }

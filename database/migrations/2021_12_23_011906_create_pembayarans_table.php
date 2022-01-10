@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReviewsTable extends Migration
+class CreatePembayaransTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateReviewsTable extends Migration
      */
     public function up()
     {
-        Schema::create('reviews', function (Blueprint $table) {
+        Schema::create('pembayarans', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('homestay_id')->references('id')->on('homestays');
-            $table->foreignId('user_id')->references('id')->on('detail_users');
-            $table->double('rating');
-            $table->text('komentar')->nullable();
+            $table->string('nama_bank');
+            $table->string('no_rekening');
             $table->timestamps();
-
-            $table->primary(['homestay_id', 'user_id']);
         });
     }
 
@@ -31,6 +29,6 @@ class CreateReviewsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reviews');
+        Schema::dropIfExists('pembayarans');
     }
 }

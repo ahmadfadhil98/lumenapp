@@ -31,14 +31,15 @@ class UserController extends Controller
         $username = $request->input('username');
         $email = $request->input('email');
         $password = Hash::make($request->input('password'));
-
         $generateToken = bin2hex(random_bytes(40));
+        $fcm_token = $request->input('fcm_token');
 
         $user = User::create([
             'username' => $username,
             'email' => $email,
             'password' => $password,
-            'token' => $generateToken
+            'token' => $generateToken,
+            'fcm_token' => $fcm_token
         ]);
 
         // $duser = DetailUser::create([
@@ -54,6 +55,21 @@ class UserController extends Controller
 
     public function show($id)
     {
+    }
+
+    public function otp($phone)
+    {
+        $duser = DetailUser::where('no_hp', $phone)->first();
+
+        if (!$duser) {
+            return response()->json([
+                'message' => 'Nomor ini tidak terdaftar'
+            ]);
+        }
+
+        return response()->json([
+            'id' => $duser->id
+        ]);
     }
 
     public function update(Request $request, $id)

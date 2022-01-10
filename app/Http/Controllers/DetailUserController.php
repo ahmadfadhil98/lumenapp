@@ -24,6 +24,11 @@ class DetailUserController extends Controller
         return response()->json($listUser);
     }
 
+    public function getUser()
+    {
+        $dUser = new stdClass();
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -46,7 +51,7 @@ class DetailUserController extends Controller
             'no_hp' => 'unique:detail_users,no_hp'
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors() , 200);
+            return response()->json($validator->errors(), 200);
         }
 
         $id = $request->input('id');
@@ -57,9 +62,9 @@ class DetailUserController extends Controller
         $tgl_lahir = $request->input('tgl_lahir');
         $foto = $request->input('foto');
 
-        if($tgl_lahir!=null){
+        if ($tgl_lahir != null) {
             $date = Carbon::createFromFormat('d/m/Y', $tgl_lahir)->format('Y-m-d');
-        }else{
+        } else {
             $date = null;
         }
 
@@ -69,7 +74,7 @@ class DetailUserController extends Controller
             'jk' => $jk,
             'no_hp' => $no_hp,
             'tempat_lahir' => $tempat_lahir,
-            'tgl_lahir' => $date   ,
+            'tgl_lahir' => $date,
             'foto' => $foto,
         ]);
 
@@ -84,13 +89,13 @@ class DetailUserController extends Controller
      */
     public function show($id)
     {
-        $user = User::where('token',$id)->first();
+        $user = User::where('token', $id)->first();
 
         $listUser = new stdClass();
-        $itemUser = DetailUser::join('users','users.id','=','detail_users.id')
-        ->where('users.token',$id)
-        ->select('detail_users.*','email','username')
-        ->get();
+        $itemUser = DetailUser::join('users', 'users.id', '=', 'detail_users.id')
+            ->where('users.token', $id)
+            ->select('detail_users.*', 'email', 'username')
+            ->get();
         $listUser->idUser = $user->id;
         $listUser->detail_user = $itemUser;
         return response()->json($listUser);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DetailFasilitas;
 use App\Models\Homestay;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use stdClass;
@@ -83,6 +84,37 @@ class HomestayController extends Controller
         ]);
 
         return response()->json(['message' => 'Data Berhasil Masuk ke Tabel Homestay']);
+    }
+
+    public function detail($id)
+    {
+
+        $home = new stdClass();
+        $homeItem = Homestay::join('jenis', 'jenis.id', '=', 'homestays.jenis_id')
+            ->where('homestays.id', $id)
+            ->select(
+                'homestays.id',
+                'nama',
+                'jenis',
+                'alamat',
+                'website',
+                'no_hp',
+                'foto',
+                'latitude',
+                'longitude',
+                DB::raw('(SELECT AVG(rating) from reviews where reviews.homestay_id = homestays.id) as rating')
+            )
+            ->first();
+        $fasilitasItem = DetailFasilitas::join('fasilitas', 'fasilitas.id', '=', 'detail_fasilitas.fasilitas_id')
+            ->where('homestay_id', $id)
+            ->select('fasilitas.nama', 'jumlah')->get();
+
+        $unitItem = Unit::where('homestay_id', $id)->get();
+        $home->detail_homestay = $homeItem;
+        $home->fasilitas_home = $fasilitasItem;
+        $home->unit_home = $unitItem;
+
+        return response()->json($home);
     }
 
     /**

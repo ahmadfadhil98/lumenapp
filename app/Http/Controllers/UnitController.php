@@ -67,7 +67,7 @@ class UnitController extends Controller
     public function show($id)
     {
         $unitList = new stdClass();
-        $units = Unit::where('homestay_id', $id)->select('id', 'nama', 'harga')->get();
+        $units = Unit::where('homestay_id', $id)->select('id', 'nama', 'harga', 'foto')->get();
         $unitList->jumlah = $units->count();
         $unitList->unit = $units;
         return response()->json($unitList);

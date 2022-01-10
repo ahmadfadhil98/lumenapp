@@ -16,7 +16,7 @@ class CreateDetailFasilitasTable extends Migration
         Schema::create('detail_fasilitas', function (Blueprint $table) {
             $table->foreignId('homestay_id')->references('id')->on('homestays');
             $table->foreignId('fasilitas_id')->references('id')->on('fasilitas');
-            $table->integer('jumlah');
+            $table->integer('jumlah')->default(0);
             $table->timestamps();
 
             $table->primary(['homestay_id','fasilitas_id']);

@@ -15,7 +15,7 @@ class CreateDetailUsersTable extends Migration
     {
         Schema::create('detail_users', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->primary();
-            $table->string('nama');
+            $table->string('nama')->nullable();
             $table->integer('jk')->nullable();
             $table->string('no_hp')->nullable();
             $table->string('tempat_lahir')->nullable();
@@ -23,7 +23,7 @@ class CreateDetailUsersTable extends Migration
             $table->string('foto')->nullable();
             $table->timestamps();
 
-            $table->foreignId('id')->references('id')->on('users');
+            $table->foreign('id')->references('id')->on('users');
         });
     }
 
