@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\DetailBooking;
 use App\Models\Homestay;
 use App\Models\Notifikasi;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use stdClass;
 
 class BookingController extends Controller
@@ -25,28 +27,69 @@ class BookingController extends Controller
 
     public function belum()
     {
-        $listBooking = new stdClass();
+        $dBooking = new stdClass();
         $booking = Booking::where('bookings.status', '=', 1)
             ->join('pembayarans', 'pembayarans.id', '=', 'bookings.pembayaran_id')
-            ->join('units', 'units.id', '=', 'bookings.unit_id')
-            ->select('bookings.id', 'pembayarans.nama_bank', 'pembayarans.no_rekening', 'bookings.token', 'units.harga')
-            ->get();
-        $listBooking->list_booking = $booking;
-        return response()->json($listBooking);
+            ->join('homestays', 'homestays.id', '=', 'bookings.homestay_id')
+            ->select(
+                'bookings.id',
+                'pembayarans.nama_bank',
+                'pembayarans.no_rekening',
+                'bookings.token',
+                'bookings.check_in',
+                'bookings.check_out',
+                DB::raw('(SELECT SUM(units.harga) from detail_bookings JOIN units on units.id=detail_bookings.unit_id WHERE detail_bookings.booking_id=bookings.id) as tarif')
+            )->get();
+        $dBooking->list_booking = $booking;
+
+        return response()->json($dBooking);
     }
 
     public function sudah()
     {
-        $listBooking = new stdClass();
+        $dBooking = new stdClass();
         $booking = Booking::where('bookings.status', '=', 2)
             ->join('pembayarans', 'pembayarans.id', '=', 'bookings.pembayaran_id')
-            ->join('units', 'units.id', '=', 'bookings.unit_id')
-            ->select('bookings.id', 'pembayarans.nama_bank', 'pembayarans.no_rekening', 'bookings.token', 'units.harga')
-            ->get();
-        $listBooking->list_booking = $booking;
-        return response()->json($listBooking);
+            ->join('homestays', 'homestays.id', '=', 'bookings.homestay_id')
+            ->select(
+                'bookings.id',
+                'pembayarans.nama_bank',
+                'pembayarans.no_rekening',
+                'bookings.token',
+                'bookings.check_in',
+                'bookings.check_out',
+                DB::raw('(SELECT SUM(units.harga) from detail_bookings JOIN units on units.id=detail_bookings.unit_id WHERE detail_bookings.booking_id=bookings.id) as tarif')
+            )->get();
+        $dBooking->list_booking = $booking;
+
+        return response()->json($dBooking);
     }
 
+    public function history()
+    {
+        $dBooking = new stdClass();
+        $auth = Auth::user();
+
+        $booking = Booking::where('bookings.user_id', $auth->id)
+            ->join('pembayarans', 'pembayarans.id', '=', 'bookings.pembayaran_id')
+            ->join('homestays', 'homestays.id', '=', 'bookings.homestay_id')
+            ->select(
+                'bookings.id',
+                'pembayarans.nama_bank',
+                'pembayarans.no_rekening',
+                'bookings.token',
+                'bookings.check_in',
+                'bookings.check_out',
+                'homestays.nama',
+                'bookings.homestay_id',
+                'bookings.updated_at',
+                'bookings.status',
+                DB::raw('(SELECT SUM(units.harga) from detail_bookings JOIN units on units.id=detail_bookings.unit_id WHERE detail_bookings.booking_id=bookings.id) as tarif')
+            )->get();
+        $dBooking->list_booking = $booking;
+
+        return response()->json($dBooking);
+    }
 
 
     /**
@@ -68,17 +111,19 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'unit_id' => 'required',
+            'homestay_id' => 'required',
             'check_in' => 'required',
             'check_out' => 'required',
             'pembayaran_id' => 'required'
         ]);
 
+        $units = $request->input('units');
+
         $auth = Auth::user();
 
         $user_id = $auth->id;
 
-        $unit_id = $request->input('unit_id');
+        $homestay_id = $request->input('homestay_id');
         $check_in = $request->input('check_in');
         $check_out = $request->input('check_out');
         $pembayaran_id = $request->input('pembayaran_id');
@@ -87,12 +132,19 @@ class BookingController extends Controller
 
         $booking = Booking::create([
             'user_id' => $user_id,
-            'unit_id' => $unit_id,
+            'homestay_id' => $homestay_id,
             'check_in' => $check_in,
             'check_out' => $check_out,
             'pembayaran_id' => $pembayaran_id,
             'token' => $generateToken
         ]);
+
+        foreach ($units as $unit) {
+            DetailBooking::create([
+                'booking_id' => $booking->id,
+                'unit_id' => $unit
+            ]);
+        }
 
         return response()->json([
             'message' => 'Data Berhasil Masuk ke Tabel Detail Fasilitas',
@@ -111,9 +163,14 @@ class BookingController extends Controller
         $dBooking = new stdClass();
         $booking = Booking::where('bookings.id', $id)
             ->join('pembayarans', 'pembayarans.id', '=', 'bookings.pembayaran_id')
-            ->join('units', 'units.id', '=', 'bookings.unit_id')
-            ->select('pembayarans.nama_bank', 'pembayarans.no_rekening', 'bookings.token', 'units.harga', 'bookings.check_in', 'bookings.check_out')->get();
+            ->join('homestays', 'homestays.id', '=', 'bookings.homestay_id')
+            ->select('pembayarans.nama_bank', 'pembayarans.no_rekening', 'bookings.token', 'bookings.check_in', 'bookings.check_out')->first();
+        $unit = DetailBooking::where('booking_id', $id)
+            ->join('units', 'units.id', '=', 'detail_bookings.unit_id')
+            ->select('units.nama', 'units.harga')
+            ->get();
         $dBooking->detail_booking = $booking;
+        $dBooking->unit_booking = $unit;
         return response()->json($dBooking);
     }
 
@@ -121,8 +178,7 @@ class BookingController extends Controller
     {
         $booking = Booking::find($id);
         $user = User::find($booking->user_id);
-        $unit = Unit::find($booking->unit_id);
-        $homestay = Homestay::find($unit->homestay_id);
+        $homestay = Homestay::find($booking->homestay_id);
 
         $notifikasi = new stdClass();
         $notifikasi->title = "Pengingat";
@@ -142,8 +198,7 @@ class BookingController extends Controller
 
         $booking = Booking::find($id);
         $user = User::find($booking->user_id);
-        $unit = Unit::find($booking->unit_id);
-        $homestay = Homestay::find($unit->homestay_id);
+        $homestay = Homestay::find($booking->homestay_id);
         $notifikasi = new stdClass();
         $notifikasi->title = "Selamat";
         $notifikasi->message = "Pembayaran kamu berhasil, sampai jumpa di tempat ya";
@@ -166,8 +221,7 @@ class BookingController extends Controller
 
         $booking = Booking::find($id);
         $user = User::find($booking->user_id);
-        $unit = Unit::find($booking->unit_id);
-        $homestay = Homestay::find($unit->homestay_id);
+        $homestay = Homestay::find($booking->homestay_id);
         $notifikasi = new stdClass();
         $notifikasi->title = "Pemberitahuan";
         $notifikasi->message = "Dikarenakan anda belum melakukan pembayaran, dengan berat hati kami membatalkan booking anda";

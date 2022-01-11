@@ -3,6 +3,7 @@
 /** @var \Laravel\Lumen\Routing\Router $router */
 
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -44,6 +45,7 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 
     $router->get('api/review', "ReviewController@index");
     $router->post('api/review/store', "ReviewController@store");
+    $router->post('api/updateReview/{id}', 'ReviewController@update');
     $router->get('api/review/{id}', 'ReviewController@show');
     $router->get('api/review/{id_user}/{id_homestay}', 'ReviewController@look');
 
@@ -80,8 +82,10 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 
     $router->get('api/listBelum', 'BookingController@belum');
     $router->get('api/listSudah', 'BookingController@sudah');
+
     $router->post('api/booking/store', 'BookingController@store');
     $router->get('api/booking/{id}', 'BookingController@show');
+    $router->get('api/history', 'BookingController@history');
 
     $router->get('api/notifikasi', 'NotifikasiController@index');
     $router->post('api/notifikasi/store', 'NotifikasiController@store');

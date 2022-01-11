@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Review;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use stdClass;
 
 class ReviewController extends Controller
@@ -40,7 +41,7 @@ class ReviewController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'user_id' =>'required',
+            'user_id' => 'required',
             'homestay_id' => 'required'
         ]);
 
@@ -69,20 +70,20 @@ class ReviewController extends Controller
     public function show($id)
     {
         $listReview = new stdClass();
-        $review = Review::join('detail_users','detail_users.id','=','reviews.user_id')
-        ->join('homestays','homestays.id','=','reviews.homestay_id')
-        ->where('reviews.homestay_id','=',$id)
-        ->select('detail_users.nama','reviews.komentar','reviews.rating','reviews.homestay_id','reviews.updated_at','detail_users.foto')
-        ->get();
+        $review = Review::join('detail_users', 'detail_users.id', '=', 'reviews.user_id')
+            ->join('homestays', 'homestays.id', '=', 'reviews.homestay_id')
+            ->where('reviews.homestay_id', '=', $id)
+            ->select('detail_users.nama', 'reviews.komentar', 'reviews.rating', 'reviews.homestay_id', 'reviews.updated_at', 'detail_users.foto')
+            ->get();
         $listReview->review = $review;
         return response()->json($listReview);
     }
 
-    public function look($id_user,$id_homestay)
+    public function look($id_user, $id_homestay)
     {
-        $review = Review::where('homestay_id','=',$id_homestay)
-        ->where('user_id','=',$id_user)
-        ->select('rating','komentar')->first();
+        $review = Review::where('homestay_id', '=', $id_homestay)
+            ->where('user_id', '=', $id_user)
+            ->select('rating', 'komentar')->first();
         return response()->json($review);
     }
 
@@ -104,9 +105,21 @@ class ReviewController extends Controller
      * @param  \App\Models\Review  $review
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Review $review)
+    public function update($id, Request $request)
     {
-        //
+        $auth = Auth::user();
+        $review = Review::where('homestay_id', $id)
+            ->where('user_id', $auth->id);
+
+        $rating = $request->input('rating');
+        $komentar = $request->input('komentar');
+
+        $review->update([
+            'rating' => $rating,
+            'komentar' => $komentar
+        ]);
+
+        return response()->json(['message' => 'Data Berhasil Di update ke Tabel Review']);
     }
 
     /**
